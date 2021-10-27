@@ -1,5 +1,10 @@
 package FileProcessor;
-
+/**
+    * Processes string into String tockens from input files into a hash map one file at a time
+    * After creating hash map , it writes the data into the output file
+    *
+    *
+ */
 import java.io.PrintWriter;
 import java.util.*;
 
@@ -16,7 +21,19 @@ public class OutputGenerator {
     public OutputGenerator() {
 
     }
-
+/* OutputGenerator parameterized constructor
+     * Creates a tockenizer object for the input string with a delimiter at the start of each record (@)
+     * Creates a hashmap object to consume all the string tockens
+     *
+     * Calls print methods to write into the output files
+     *
+     * @param  data   sting read from input file
+     * @param  ieee    A PrintWriter object for each for the IEEE output file
+     * @param  acm    A PrintWriter object for each for the ACM output file
+     * @param  nj    A PrintWriter object for the NJ output file
+     * @return      void
+     *
+ */
     public OutputGenerator(String data, PrintWriter ieee, PrintWriter acm, PrintWriter nj) {
         data = data;
         ieeepw = ieee;
@@ -31,10 +48,14 @@ public class OutputGenerator {
     }
 
     private void printnj() {
-//        1.Author Surname, Author Initial. Title. Publication Title Volume number, Pages Used (Year Published).
-//        J. Park & J. N. James & Q. Li & Y. Xu & W. Huang. Optimal DASH-Multicasting over LTE. IEEE Transactions on Vehicular Technology. PP, 15-27(2018).
+
+/*      Writes into the Nature journal output file in the format guidelines below
+*       1.Author Surname, Author Initial. Title. Publication Title Volume number, Pages Used (Year Published).
+*       J. Park & J. N. James & Q. Li & Y. Xu & W. Huang. Optimal DASH-Multicasting over LTE. IEEE Transactions on Vehicular Technology. PP, 15-27(2018).
+*       An iterator object is used to loop through the hash map and extract the required fields into a string per record
+*/
         Iterator<Map.Entry<String, HashMap<String, String>>> itr = datahash.entrySet().iterator();
-        int i = 1;
+
         String report;
         Map.Entry<String, HashMap<String, String>> entry = null;
         while ((itr).hasNext()) {
@@ -50,18 +71,21 @@ public class OutputGenerator {
                     + entry.getValue().get("title") + ". "+ entry.getValue().get("journal") + ". " + entry.getValue().get("volume") + ", "
                     + entry.getValue().get("pages")+ " (" + entry.getValue().get("year") + "). ";
 
-//            System.out.println(report);
             njpw.println(report);
-            i++;
+
 
         }
     }
 
     private void printacm() {
+
+/*      Writes into the ACM output file in the format guidelines below
+*       [1] Author. year. title. journal, volume number, pagerange. DOI:
+*       [4]	T. K. Roman et al. 2018.  IP-Based Mobility Optimization. Mobile Networks and Applications. AA, 4 (2018), 64-82. DOI:https://doi.org/233.5490/TPS.2018.8700003.
+*       [1] J. Park et al. 2018. Optimal DASH-Multicasting over LTE. IEEE Transactions on Vehicular Technology. PP, 99 (2018), 15-27. DOI:https://doi.org/10.1109/TVT.2018.2789899.
+*       An iterator object is used to loop through the hash map and extract the required fields into a string per record
+*/
         String report;
-//        [1] Author. year. title. journal, volume number, pagerange. DOI:
-//[4]	T. K. Roman et al. 2018.  IP-Based Mobility Optimization. Mobile Networks and Applications. AA, 4 (2018), 64-82. DOI:https://doi.org/233.5490/TPS.2018.8700003.
-//   [1] J. Park et al. 2018. Optimal DASH-Multicasting over LTE. IEEE Transactions on Vehicular Technology. PP, 99 (2018), 15-27. DOI:https://doi.org/10.1109/TVT.2018.2789899.
         Iterator<Map.Entry<String, HashMap<String, String>>> itr = datahash.entrySet().iterator();
         int i = 1;
         String author;
@@ -89,13 +113,13 @@ public class OutputGenerator {
     }
 
     private void printieee() {
-
+/*      Writes into the IEEE output file in the format guidelines below
+*       [#]      Author, “Title,” Journal, volume, number, page range, month year, DOI.
+*       T. K. Roman, C. Henry Jr., L. Fevens. " IP-Based Mobility Optimization", Mobile Networks and Applications, vol. AA, no. 4, p. 64-82, February 2018.
+*       J. Park, J. N. James, Q. Li, Y. Xu, W. Huang. "Optimal DASH-Multicasting over LTE", IEEE Transactions on Vehicular Technology, vol. PP, no. 99, p. 15-27, January 2018.
+*       An iterator object is used to loop through the hash map and extract the required fields into a string per record
+*/
         String report;
-//        [#]      Author, “Title,” Journal, volume, number, page range, month year, DOI.
-//        T. K. Roman, C. Henry Jr., L. Fevens. " IP-Based Mobility Optimization", Mobile Networks and Applications, vol. AA, no. 4, p. 64-82, February 2018.
-//J. Park, J. N. James, Q. Li, Y. Xu, W. Huang. "Optimal DASH-Multicasting over LTE", IEEE Transactions on Vehicular Technology, vol. PP, no. 99, p. 15-27, January 2018.
-
-
         Iterator<Map.Entry<String, HashMap<String, String>>> itr = datahash.entrySet().iterator();
 
         Map.Entry<String, HashMap<String, String>> entry = null;

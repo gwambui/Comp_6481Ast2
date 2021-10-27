@@ -1,17 +1,35 @@
 package FileProcessor;
-
+/**
+ * Processes .bib files and generates output files for three reference formats
+ * (IEEE,ACM, Nature Journal
+ * Allows the user to view output files once generated.
+ *
+ */
 import com.sun.xml.internal.bind.v2.TODO;
 
 import java.io.*;
 import java.util.Scanner;
 
-//import java.io.PrintWriter;
-//import java.io.FileOutputStream;
-//import java.io.FileNotFoundException;
-//import java.io.FileInputStream;
+
 
 public class FileProcessor {
     static int outfileindex = 0;
+    /**
+     * This method is the main engine of the operation: reads all the input files
+     * Creates an OutputGenerator object and passes  the read string per file
+     * If any of the input files are invalid, they are skipped and their corresponding
+     * output files deleted. The process is completed when all the valid input files are
+     * read and their outputs created and written.
+     * The method closes all the reader and writer objects before returning.
+     * <p>
+     *
+     * @param  scanners  An array of scanner objects for each input file
+     * @param  pwieee   An array of PrintWriter objects for each of the IEEE output files
+     * @param  pwacm    An array of PrintWriter objects for each of the ACM output files
+     * @param  pwnj    An array of PrintWriter objects for each of the NJ output files
+     * @return      void
+     *
+     */
     public static void  processFilesForValidation(Scanner[] scanners, PrintWriter[] pwieee, PrintWriter[] pwacm, PrintWriter[] pwnj, String[] infiles, File[] outfiles){
         String line = null;
         String fullfile;
@@ -45,6 +63,25 @@ public class FileProcessor {
         closeOutfiles(pwieee, pwacm,  pwnj);
         closeInFiles(scanners);
     }
+    /**
+     * cleanOutfiles(); is called first to clean out any output files from the previous execution
+     * The main method opens all the input files and creates.
+     * It first confirms that each file exists. If one file is missing,
+     * it throws an fileNotFound exception and exits. If all the files are present,
+     * it creates an array of scanner objects one for each input file.
+     * It then creates output files for each of the three referencing formats (mentioned above)
+     * If any of the output files exists, a message is printed and the program terminates
+     * after deleting all output files and closing the input files.
+     * If all the output files are created safely, 3 arrays array of PrintWriter objects are created
+     * A list of all the output files is maintained for easy access to the file names.
+     * The main engine (processFilesForValidation) is called and passed the scanner array and the
+     * three PrintWriter arrays.
+     * <p>
+     *
+     *
+     * @return      void
+     *
+     */
     public static void main(String[] args) {
 //  calling close outfiles before running program to clean outputfolder
         cleanOutfiles();
@@ -87,18 +124,21 @@ public class FileProcessor {
                    File f2 = new File("outfiles/ACM"+filenumber+".json");
                    File f3 = new File("outfiles/NJ"+filenumber+".json");
 
-                   if(f1.exists() ){
-                       System.out.println("Error: There is an existing file called: IEEE"+filenumber+".json"  + ".");
+
+                    String existingFile = "";
+                   if(f1.exists() ){ existingFile = "IEEE"+filenumber+".json" + ".";
+
+                   }else if (f2.exists()){ existingFile = "ACM"+filenumber+".json" + ".";
+
+                   }else if(f3.exists()){ existingFile = "NJ"+filenumber+".json" + ".";
+
+                   }
+                   if(!existingFile.isEmpty()){
+                       System.out.println("Error: There is an existing file called:"  + existingFile);
                        closeOutfiles(pwieee,pwacm,pwnj);
                        cleanOutfiles();
-                   }else if (f2.exists()){
-                       System.out.println("Error: There is an existing file called: ACM"+filenumber+".json" + ".");
-                       closeOutfiles(pwieee,pwacm,pwnj);
-                       cleanOutfiles();
-                   }else if(f3.exists()){
-                       System.out.println("Error: There is an existing file called: NJ"+filenumber+".json" + ".");
-                       closeOutfiles(pwieee,pwacm,pwnj);
-                       cleanOutfiles();
+                       closeInFiles(scanners);
+                       System.exit(0);
                    }
                    pwieee[i] = new PrintWriter(new FileOutputStream(f1,true));
                    pwacm[i] = new PrintWriter(new FileOutputStream(f2,true));
@@ -203,25 +243,30 @@ public class FileProcessor {
 
     private static void closeInFiles(Scanner[] scanners) {
         for(Scanner sc : scanners){
-            sc.close();
+            if (sc instanceof Scanner) {
+                sc.close();
+            }
         }
     }
 
     private static void closeOutfiles(PrintWriter[] pwieee, PrintWriter[] pwacm, PrintWriter[] pwnj) {
-        if (pwieee.length > 0) {
-            for (PrintWriter pw : pwieee) {
+
+        for (PrintWriter pw : pwieee) {
+            if(pw instanceof PrintWriter){
+                pw.close();
+            }
+
+        }
+        for (PrintWriter pw : pwacm) {
+            if(pw instanceof PrintWriter){
                 pw.close();
             }
         }
-        if (pwacm.length > 0) {
-            for (PrintWriter pw : pwacm) {
+        for (PrintWriter pw : pwnj) {
+            if(pw instanceof PrintWriter){
                 pw.close();
             }
         }
-        if (pwnj.length > 0) {
-            for (PrintWriter pw : pwnj) {
-                pw.close();
-            }
         }
-    }
+
 }
