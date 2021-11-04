@@ -1,4 +1,9 @@
 package FileProcessor;
+// -----------------------------------------------------
+// Assignment (2)
+// © Pargol,Wambui
+// Written by: (Pargol Poshtareh 26428126,Wambui Josphine Kinyanjui 24600878)
+// -----------------------------------------------------
 /**
  * Processes .bib files and generates output files for three reference formats
  * (IEEE,ACM, Nature Journal
@@ -12,14 +17,15 @@ import java.util.Scanner;
 
 
 
-public class FileProcessor {
+class FileProcessor {
     static int outfileindex = 0;
     /**
      * This method is the main engine of the operation: reads all the input files
      * Creates an OutputGenerator object and passes  the read string per file
-     * If any of the input files are invalid, they are skipped and their corresponding
-     * output files deleted. The process is completed when all the valid input files are
-     * read and their outputs created and written.
+     * If any of the input files are invalid, a FileInvalidException is thrown,
+     * the file is skipped and the corresponding output files are deleted.
+     * The process is completed when all the valid input files are
+     * read and their outputs files written.
      * The method closes all the reader and writer objects before returning.
      * <p>
      *
@@ -27,8 +33,8 @@ public class FileProcessor {
      * @param  pwieee   An array of PrintWriter objects for each of the IEEE output files
      * @param  pwacm    An array of PrintWriter objects for each of the ACM output files
      * @param  pwnj    An array of PrintWriter objects for each of the NJ output files
-     * @return      void
-     *
+     * @param  infiles an array of strings representing names of the input files
+     * @param outfiles An array of all the output files created in main
      */
     public static void  processFilesForValidation(Scanner[] scanners, PrintWriter[] pwieee, PrintWriter[] pwacm, PrintWriter[] pwnj, String[] infiles, File[] outfiles){
         String line = null;
@@ -50,7 +56,7 @@ public class FileProcessor {
                     }
                 }
                 og = new OutputGenerator(fullfile, pwieee[i], pwacm[i],  pwnj[i]);
-
+                og.printFiles();
             }catch(FileInvalidException e){
                 System.out.println(e.getMessage());
 //                    link to the input and output file name to report invalid file and delete outfiles
@@ -63,6 +69,7 @@ public class FileProcessor {
         closeOutfiles(pwieee, pwacm,  pwnj);
         closeInFiles(scanners);
     }
+
     /**
      * cleanOutfiles(); is called first to clean out any output files from the previous execution
      * The main method opens all the input files and creates.
@@ -76,11 +83,8 @@ public class FileProcessor {
      * A list of all the output files is maintained for easy access to the file names.
      * The main engine (processFilesForValidation) is called and passed the scanner array and the
      * three PrintWriter arrays.
-     * <p>
      *
-     *
-     * @return      void
-     *
+     * @param args main method args
      */
     public static void main(String[] args) {
 //  calling close outfiles before running program to clean outputfolder
@@ -159,9 +163,8 @@ public class FileProcessor {
 
         }
         processFilesForValidation(scanners,pwieee,pwacm,pwnj,inputFiles,outFiles);
-
 //        User can request to read the output files *using buffered reader
-        System.out.println("Enter output name of the file you wish to read:");
+        System.out.println("\nEnter name of the output file you wish to read:");
         Scanner sc = new Scanner(System.in);
         String name = sc.nextLine();
         BufferedReader br = null;
@@ -180,17 +183,22 @@ public class FileProcessor {
                 System.out.println("File could not be found. exiting program");
                 System.exit(0);
             } catch (IOException Ie) {
-                System.out.println("Error occured while reading the output file");
+                System.out.println("Error occurred while reading the output file");
                 System.out.println(Ie.getMessage());
                 System.exit(0);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Error occurred while reading the output file");
+            System.out.println(e.getMessage());
         }
 
 
     }
-
+/**
+ *  displayOutfile is called to read one output file from the generated list of files
+ *  @param br BufferedReader object for one of the output files requested by user.
+ *
+ */
     private static void displayOutfile(BufferedReader br) throws IOException {
         String content;
         content = br.readLine();
@@ -201,7 +209,10 @@ public class FileProcessor {
         br.close();
 
     }
-
+/**
+ *  cleanOutfiles is called delete any files in the output folder.
+ *
+ */
     private static void cleanOutfiles() {
 
         File f = new File("outfiles");
@@ -211,6 +222,14 @@ public class FileProcessor {
             file.delete();
         }
     }
+/**
+ *  cleanOutfiles is overloaded and called with parameters to delete specific output files
+ * @param infile The invalid input file that needs to be skipped
+ * @param pw1 PrintWriter object for an invalid output file
+ * @param pw2 PrintWriter object for an invalid output file
+ * @param pw3 PrintWriter object for an invalid output file
+ *
+ */
 
     private static void cleanOutfiles(String infile,PrintWriter pw1,PrintWriter pw2, PrintWriter pw3){
         pw1.close();
@@ -234,13 +253,23 @@ public class FileProcessor {
         }
 
     }
-
+    /**
+     * saveOutfile is called to save the created output files in an array to track the output files available.
+     * @param outFiles An array created to store output files size = inputfiles*3
+     * @param f1 File object for one output file
+     * @param f2 File object for one output file
+     * @param f3 File object for one output file
+     *
+     */
     private static void saveOutfile(File[] outFiles, File f1, File f2, File f3) {
         outFiles[outfileindex++] = f1;
         outFiles[outfileindex++] = f2;
         outFiles[outfileindex++] = f3;
     }
-
+/**
+ *  closeInFiles is called delete any initialized scanner objects.
+ * @param scanners an array of scanners initialized to read input files
+ */
     private static void closeInFiles(Scanner[] scanners) {
         for(Scanner sc : scanners){
             if (sc instanceof Scanner) {
@@ -248,7 +277,13 @@ public class FileProcessor {
             }
         }
     }
-
+/**
+ * cleanOutfiles is overloaded and called with parameters to delete all output files in the PrintWriter Arrays
+ * @param pwieee PrintWriter array of objects for all initialized output files for IEEE reference format
+ * @param pwacm PrintWriter array of objects for all initialized output files for ACM reference format
+ * @param pwnj PrintWriter array of objects for all initialized output files for NJ reference format
+ *
+ */
     private static void closeOutfiles(PrintWriter[] pwieee, PrintWriter[] pwacm, PrintWriter[] pwnj) {
 
         for (PrintWriter pw : pwieee) {

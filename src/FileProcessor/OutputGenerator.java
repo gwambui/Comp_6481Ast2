@@ -1,4 +1,9 @@
 package FileProcessor;
+// -----------------------------------------------------
+// Assignment (2)
+// © Pargol,Wambui
+// Written by: (Pargol Poshtareh 26428126,Wambui Josphine Kinyanjui 24600878)
+// -----------------------------------------------------
 /**
     * Processes string into String tockens from input files into a hash map one file at a time
     * After creating hash map , it writes the data into the output file
@@ -8,7 +13,7 @@ package FileProcessor;
 import java.io.PrintWriter;
 import java.util.*;
 
-public class OutputGenerator {
+class OutputGenerator {
     private String data;
     private PrintWriter ieeepw;
     private PrintWriter acmpw;
@@ -21,7 +26,8 @@ public class OutputGenerator {
     public OutputGenerator() {
 
     }
-/* OutputGenerator parameterized constructor
+/**
+     * OutputGenerator parameterized constructor
      * Creates a tockenizer object for the input string with a delimiter at the start of each record (@)
      * Creates a hashmap object to consume all the string tockens
      *
@@ -31,7 +37,7 @@ public class OutputGenerator {
      * @param  ieee    A PrintWriter object for each for the IEEE output file
      * @param  acm    A PrintWriter object for each for the ACM output file
      * @param  nj    A PrintWriter object for the NJ output file
-     * @return      void
+     *
      *
  */
     public OutputGenerator(String data, PrintWriter ieee, PrintWriter acm, PrintWriter nj) {
@@ -41,12 +47,12 @@ public class OutputGenerator {
         njpw = nj;
         st = new StringTokenizer(data, "@");
         datahash = makehash();
+    }
+    void printFiles(){
         printieee();
         printacm();
         printnj();
-
     }
-
     private void printnj() {
 
 /*      Writes into the Nature journal output file in the format guidelines below
@@ -114,7 +120,7 @@ public class OutputGenerator {
 
     private void printieee() {
 /*      Writes into the IEEE output file in the format guidelines below
-*       [#]      Author, “Title,” Journal, volume, number, page range, month year, DOI.
+*       [#]      Author, "Title", Journal, volume, number, page range, month year, DOI.
 *       T. K. Roman, C. Henry Jr., L. Fevens. " IP-Based Mobility Optimization", Mobile Networks and Applications, vol. AA, no. 4, p. 64-82, February 2018.
 *       J. Park, J. N. James, Q. Li, Y. Xu, W. Huang. "Optimal DASH-Multicasting over LTE", IEEE Transactions on Vehicular Technology, vol. PP, no. 99, p. 15-27, January 2018.
 *       An iterator object is used to loop through the hash map and extract the required fields into a string per record
@@ -127,6 +133,7 @@ public class OutputGenerator {
             report="";
             entry = itr.next();
             report += entry.getValue().get("author")+ ", \""+entry.getValue().get("title")+"\", "
+
                     +entry.getValue().get("journal")+", vol. "+entry.getValue().get("volume")+", no. "
                     +entry.getValue().get("number")+", p. "+entry.getValue().get("pages")+", "
                     +entry.getValue().get("month")+". "+entry.getValue().get("year")+", doi: "+entry.getValue().get("doi");
